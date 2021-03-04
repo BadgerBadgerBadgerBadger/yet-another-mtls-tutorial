@@ -1,0 +1,141 @@
+<html>
+<head>
+    <link rel="stylesheet" href="reveal.js/dist/reveal.css">
+    <link rel="stylesheet" href="reveal.js/dist/theme/moon.css">
+</head>
+<body>
+<script src="reveal.js/dist/reveal.js"></script>
+
+<div class="reveal">
+    <div class="slides">
+
+        <section>
+
+            <h1>mTLS</h1>
+
+        </section>
+
+        <section>
+
+            <h3>Basics</h3>
+            <div>
+                <img src="https://www.codeproject.com/KB/IP/326574/mutualssl.png"
+                     alt="">
+            </div>
+        </section>
+
+
+        <section>
+
+            <section>
+                <h3>Ours</h3>
+
+                <img src="/mtls-talk/slides/mtls-ours-flow-diag.png" alt="">
+            </section>
+
+            <section>
+
+                <h2>Traefik Middlewares</h2>
+
+                <p>
+                    <a href="https://doc.traefik.io/traefik/middlewares/forwardauth/">ForwardAuth</a>
+                </p>
+
+                <p>
+                    <a href="https://doc.traefik.io/traefik/middlewares/passtlsclientcert/">PassTLSClientCert</a>
+                </p>
+
+            </section>
+        </section>
+
+        <section>
+
+            <section>
+                <h1>Our Very Own Certs</h1>
+
+                <a href="https://gist.github.com/fntlnz/cf14feb5a46b2eda428e000157447309">Tutorial</a>
+            </section>
+
+            <section style="width: 100%">
+                <h3>CA Certs</h3>
+                <ul>
+                    <li>
+                        <pre>
+<code>openssl genrsa \
+    -out mtls-talk.ca.key 4096</code></pre>
+                    </li>
+                    <li>
+                        <pre>
+<code>openssl req -x509 -new -nodes \
+    -key mtls-talk.ca.key \
+    -sha256 -days 1024 \
+    -out mtls-talk.ca.crt</code></pre>
+
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Server Certs</h3>
+                <ul>
+                    <li>
+                        <pre><code>openssl genrsa -out server.mtls-talk.local.key 2048</code></pre>
+                    </li>
+                    <li>
+                        <pre>
+                            <code>
+openssl req -new -sha256 -key server.mtls-talk.local.key \
+    -subj "/C=BE/ST=AN/O=Sentiance/CN=server.mtls-talk.local" \
+    -out server.mtls-talk.local.csr
+                        </code></pre>
+                    </li>
+                    <li>
+                        <pre>
+                            <code>
+openssl x509 -req -in server.mtls-talk.local.csr \
+    -CA mtls-talk.ca.crt -CAkey mtls-talk.ca.key \
+    -CAcreateserial -out server.mtls-talk.local.crt \
+    -days 500 -sha256
+                        </code></pre>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Client Certs</h3>
+                <ul>
+                    <li>
+                        <pre><code>openssl genrsa -out client.mtls-talk.local.key 2048</code></pre>
+                    </li>
+                    <li>
+                        <pre>
+                            <code>
+openssl req -new -sha256 -key client.mtls-talk.local.key \
+    -subj "/C=BE/ST=AN/O=Sentiance/CN=client.mtls-talk.local" \
+    -out client.mtls-talk.local.csr
+                        </code></pre>
+                    </li>
+                    <li>
+                        <pre>
+                            <code>
+openssl x509 -req -in client.mtls-talk.local.csr \
+    -CA mtls-talk.ca.crt -CAkey mtls-talk.ca.key \
+    -CAcreateserial -out client.mtls-talk.local.crt \
+    -days 500 -sha256
+                        </code></pre>
+                    </li>
+                </ul>
+            </section>
+
+        </section>
+
+    </div>
+
+</div>
+
+<script>
+    Reveal.initialize({});
+</script>
+
+</body>
+</html>

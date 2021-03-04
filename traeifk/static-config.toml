@@ -1,0 +1,30 @@
+## Static configuration
+[log]
+level = "DEBUG"
+
+[api]
+dashboard = true
+debug = true
+insecure = true
+
+[entryPoints]
+[entryPoints.web]
+address = ":8089"
+
+[entryPoints.websecure]
+address = ":443"
+
+[providers]
+# Enable the file provider to define routers / middlewares / services in file
+[providers.file]
+directory = "..."
+
+[accessLog]
+[accessLog.fields]
+defaultMode = "keep"
+
+[accessLog.fields.names]
+defaultMode = "keep"
+
+[accessLog.fields.headers]
+defaultMode = "keep"

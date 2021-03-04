@@ -1,0 +1,59 @@
+[http]
+
+[http.routers]
+
+[http.routers.traeifk-api]
+rule = "Host(`traefik.local`)"
+service = "api@internal"
+
+[http.routers.mtls-talk]
+rule = "Host(`server.mtls-talk.local`)"
+service = "mtls-talk"
+middlewares = ["passMTLSCert"]
+
+#                [http.routers.mtls-talk.tls]
+#                options = "myTLSOptions"
+
+[http.services]
+[http.services.mtls-talk.loadBalancer]
+
+[[http.services.mtls-talk.loadBalancer.servers]]
+url = "http://127.0.0.1:6969/"
+
+[tls]
+
+[[tls.certificates]]
+certFile = "..."
+keyFile = "..."
+
+[tls.options]
+[tls.options.myTLSOptions]
+[tls.options.myTLSOptions.clientAuth]
+#        clientAuthType = "RequireAndVerifyClientCert"
+#        caFiles = ["..."]
+
+[http.middlewares.passMTLSCert.passTLSClientCert]
+pem = true
+
+[http.middlewares.passMTLSCert.passTLSClientCert.info]
+notAfter = true
+notBefore = true
+sans = true
+
+[http.middlewares.passMTLSCert.passTLSClientCert.info.subject]
+country = true
+province = true
+locality = true
+organization = true
+commonName = true
+serialNumber = true
+domainComponent = true
+
+[http.middlewares.passMTLSCert.passTLSClientCert.info.issuer]
+country = true
+province = true
+locality = true
+organization = true
+commonName = true
+serialNumber = true
+domainComponent = true
